@@ -39,6 +39,11 @@ class KafkaConfig:
         self._sasl_kerberos_service_name = instance.get('sasl_kerberos_service_name', 'kafka')
         self._sasl_kerberos_domain_name = instance.get('sasl_kerberos_domain_name')
         self._sasl_oauth_token_provider = instance.get('sasl_oauth_token_provider')
+        self._tls_ca_cert = instance.get("tls_ca_cert")
+        self._tls_cert = instance.get("tls_cert")
+        self._tls_private_key = instance.get("tls_private_key")
+        self._tls_private_key_password = instance.get("tls_private_key_password")
+        self._tls_validate_hostname = is_affirmative(instance.get("tls_validate_hostname", True))
         self.use_legacy_client = is_affirmative(instance.get('use_legacy_client', False))
 
     def validate_config(self):
