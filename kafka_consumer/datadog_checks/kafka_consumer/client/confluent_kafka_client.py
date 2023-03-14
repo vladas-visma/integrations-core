@@ -45,6 +45,7 @@ class ConfluentKafkaClient(KafkaClient):
             "ssl.key.location": self.config._tls_private_key,
             "ssl.key.password": self.config._tls_private_key_password,
             "ssl.endpoint.identification.algorithm": "https" if self.config._tls_validate_hostname else "none",
+            "ssl.crl.location": self.config._crlfile,
             # Only one can be defined, even if it's called "mechanisms"
             "sasl.mechanisms": self.config._sasl_mechanism,
             "sasl.username": self.config._sasl_plain_username,
