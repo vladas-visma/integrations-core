@@ -46,6 +46,11 @@ class KafkaConfig:
         self._tls_validate_hostname = is_affirmative(instance.get("tls_validate_hostname", True))
         self.use_legacy_client = is_affirmative(instance.get('use_legacy_client', False))
 
+        if self._tls_cert or self._tls_ca_cert or self._tls_private_key or self._tls_private_key_password:
+            self._tls_verify = True
+        else:
+            self._tls_verify = is_affirmative(instance.get("tls_verify", True))
+
     def validate_config(self):
         if not self._kafka_connect_str:
             raise ConfigurationError('`kafka_connect_str` is required')
