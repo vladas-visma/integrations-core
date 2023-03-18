@@ -1,0 +1,38 @@
+name: PR test
+
+on:
+  workflow_call:
+    inputs:
+      repo:
+        required: true
+        type: string
+
+      python-version:
+        required: false
+        default: "3.8"
+        type: string
+
+jobs:
+  compute-matrix:
+    uses: ./.github/workflows/compute-matrix.yml
+    with:
+      repo: "${{ inputs.repo }}"
+
+  run:
+    needs:
+    - compute-matrix
+    if: needs.compute-matrix.outputs.matrix != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.compute-matrix.outputs.matrix) }}
+
+    uses: ./.github/workflows/test-target.yml
+    with:
+      repo: "${{ inputs.repo }}"
+      os: "${{ matrix.os }}"
+      target: "${{ matrix.target }}"
+      target-name: "${{ matrix.name }}"
+      python-version: "${{ inputs.python-version }}"
+      test-py2: "${{ matrix.py2 }}"
+      standard: "true"
