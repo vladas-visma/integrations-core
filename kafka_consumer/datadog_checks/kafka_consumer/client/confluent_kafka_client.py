@@ -50,9 +50,6 @@ class ConfluentKafkaClient(KafkaClient):
             "sasl.mechanism": self.config._sasl_mechanism,
             "sasl.username": self.config._sasl_plain_username,
             "sasl.password": self.config._sasl_plain_password,
-            # "sasl.oauthbearer.client.id": self.config._sasl_oauth_token_provider.get("client_id"),
-            # "sasl.oauthbearer.token.endpoint.url": self.config._sasl_oauth_token_provider.get("url"),
-            # "sasl.oauthbearer.client.secret": self.config._sasl_oauth_token_provider.get("client_secret"),
         }
 
         if self.config._sasl_mechanism == "OAUTHBEARER":
