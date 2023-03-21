@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+rm /var/lib/secret/*.key
+
 # Kafka service principal:
 kadmin.local -w password -q "add_principal -randkey kafka/broker.kerberos-demo.local@TEST.CONFLUENT.IO"  > /dev/null
 
