@@ -95,40 +95,40 @@ elif AUTHENTICATION == "kerberos":
 
 @pytest.fixture(scope='session')
 def dd_environment():
-    # with TempDir() as secret_dir:
-    secret_dir = f"{HERE}/docker/kerberos/secret"
-    """
-    Start a kafka cluster and wait for it to be up and running.
-    """
+    with TempDir() as secret_dir:
+        # secret_dir = f"{HERE}/docker/kerberos/secret"
+        """
+        Start a kafka cluster and wait for it to be up and running.
+        """
 
-    conditions = []
+        conditions = []
 
-    E2E_METADATA["docker_volumes"].append(f"{secret_dir}:/var/lib/secret")
+        E2E_METADATA["docker_volumes"].append(f"{secret_dir}:/var/lib/secret")
 
-    if AUTHENTICATION == "kerberos":
-        INSTANCE["sasl_kerberos_keytab"] = INSTANCE["sasl_kerberos_keytab"].format(secret_dir)
-        conditions.append(WaitFor(wait_for_cp_kafka_topics, attempts=10, wait=10))
+        if AUTHENTICATION == "kerberos":
+            INSTANCE["sasl_kerberos_keytab"] = INSTANCE["sasl_kerberos_keytab"].format(secret_dir)
+            conditions.append(WaitFor(wait_for_cp_kafka_topics, attempts=10, wait=10))
 
-    conditions.extend(
-        [
-            WaitFor(create_topics, attempts=60, wait=3),
-            WaitFor(initialize_topics),
-        ]
-    )
+        conditions.extend(
+            [
+                WaitFor(create_topics, attempts=60, wait=3),
+                WaitFor(initialize_topics),
+            ]
+        )
 
-    with docker_run(
-        DOCKER_IMAGE_PATH,
-        conditions=conditions,
-        env_vars={
-            "KRB5_CONFIG": f"{HERE}/docker/kerberos/kdc/krb5_integration.conf",
-            "SECRET_DIR": secret_dir,
-        },
-        build=True,
-    ):
-        yield {
-            'instances': [E2E_INSTANCE],
-            'init_config': {'kafka_timeout': 30},
-        }, E2E_METADATA
+        with docker_run(
+            DOCKER_IMAGE_PATH,
+            conditions=conditions,
+            env_vars={
+                "KRB5_CONFIG": f"{HERE}/docker/kerberos/kdc/krb5_integration.conf",
+                "SECRET_DIR": secret_dir,
+            },
+            build=True,
+        ):
+            yield {
+                'instances': [E2E_INSTANCE],
+                'init_config': {'kafka_timeout': 30},
+            }, E2E_METADATA
 
 
 @pytest.fixture
