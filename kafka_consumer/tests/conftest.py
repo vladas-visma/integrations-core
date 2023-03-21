@@ -120,7 +120,7 @@ def dd_environment():
             DOCKER_IMAGE_PATH,
             conditions=conditions,
             env_vars={
-                "KRB5_CONFIG": f"{HERE}/docker/kerberos/kdc/krb5_integration.conf",
+                "KRB5_CONFIG": f"{HERE}/docker/kerberos/kdc/krb5_agent.conf",
                 "SECRET_DIR": secret_dir,
             },
             build=True,
