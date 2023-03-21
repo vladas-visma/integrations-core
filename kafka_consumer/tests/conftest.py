@@ -45,6 +45,7 @@ else:
             f'{HERE}/scripts/start_commands.sh:/tmp/start_commands.sh',
             f'{HERE}/docker/ssl/certificate:/tmp/certificate',
             f'{HERE}/docker/kerberos/kdc/krb5_agent.conf:/etc/krb5.conf',
+            f'{HERE}/docker/kerberos/secret:/var/lib/secret',
         ],
     }
 
@@ -71,7 +72,7 @@ elif AUTHENTICATION == "kerberos":
         "sasl_mechanism": "GSSAPI",
         "sasl_kerberos_service_name": "kafka",
         "security_protocol": "SASL_PLAINTEXT",
-        "sasl_kerberos_keytab": "{}/localhost.key",
+        "sasl_kerberos_keytab": f"{HERE}/docker/kerberos/secret/localhost.key",
         "sasl_kerberos_principal": "kafka/localhost",
     }
 else:
@@ -95,18 +96,12 @@ elif AUTHENTICATION == "kerberos":
 
 @pytest.fixture(scope='session')
 def dd_environment():
-    # with TempDir() as secret_dir:
-    secret_dir = f"{HERE}/docker/kerberos/secret"
     """
     Start a kafka cluster and wait for it to be up and running.
     """
-
     conditions = []
 
-    E2E_METADATA["docker_volumes"].append(f"{secret_dir}:/var/lib/secret")
-
     if AUTHENTICATION == "kerberos":
-        INSTANCE["sasl_kerberos_keytab"] = INSTANCE["sasl_kerberos_keytab"].format(secret_dir)
         conditions.append(WaitFor(wait_for_cp_kafka_topics, attempts=10, wait=10))
 
     conditions.extend(
@@ -121,7 +116,7 @@ def dd_environment():
         conditions=conditions,
         env_vars={
             "KRB5_CONFIG": f"{HERE}/docker/kerberos/kdc/krb5_agent.conf",
-            "SECRET_DIR": secret_dir,
+            "SECRET_DIR": f"{HERE}/docker/kerberos/secret",
         },
         build=True,
     ):
