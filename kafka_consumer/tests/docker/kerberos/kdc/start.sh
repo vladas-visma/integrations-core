@@ -16,9 +16,9 @@ kadmin.local -w password -q "ktadd  -k /var/lib/secret/zookeeper.key -norandkey 
 kadmin.local -w password -q "ktadd  -k /var/lib/secret/zookeeper-client.key -norandkey zkclient@TEST.CONFLUENT.IO " > /dev/null
 kadmin.local -w password -q "ktadd  -k /var/lib/secret/localhost.key -norandkey kafka/localhost@TEST.CONFLUENT.IO " > /dev/null
 
-chmod a+r /var/lib/secret/broker.key
-chmod a+r /var/lib/secret/zookeeper.key
-chmod a+r /var/lib/secret/zookeeper-client.key
-chmod a+r /var/lib/secret/localhost.key
+chmod 777 /var/lib/secret/broker.key
+chmod 777 /var/lib/secret/zookeeper.key
+chmod 777 /var/lib/secret/zookeeper-client.key
+chmod 777 /var/lib/secret/localhost.key
 
 /usr/sbin/krb5kdc -n
